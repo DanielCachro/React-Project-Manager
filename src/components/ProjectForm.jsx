@@ -36,7 +36,7 @@ export default function AddProjectForm({handleSave, handledProject}) {
 					type='date'
 					name='dueDate'
 					id='dueDate'
-					value={project.date}
+					value={project.dueDate}
 					handleChange={handleChange}
 				/>
 			</div>

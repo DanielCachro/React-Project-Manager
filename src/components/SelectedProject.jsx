@@ -2,22 +2,31 @@ import MinimalButton from './MinimalButton'
 import noProjectImg from '../assets/no-projects.png'
 import PrimaryButton from './PrimaryButton'
 
-export default function SelectedProject() {
+export default function SelectedProject({handledProject, onDeleteProject, onAddProject}) {
+	const {title, description, dueDate} = handledProject || {}
+	const formattedDate = formatDate(dueDate)
+
+	function formatDate(date) {
+		const dateObject = new Date(date)
+
+		const month = dateObject.toLocaleString('en-US', {month: 'short'})
+		const day = dateObject.getDate()
+		const year = dateObject.getFullYear()
+
+		return `${month} ${day}, ${year}`
+	}
+
 	return (
 		<>
-			{true ? (
+			{handledProject ? (
 				<>
 					<div>
 						<div className='flex justify-between mb-2'>
-							<h3 className='text-2xl font-medium'>Project 1</h3>
-							<MinimalButton>Delete</MinimalButton>
+							<h3 className='text-2xl font-medium'>{title}</h3>
+							<MinimalButton onClick={onDeleteProject}>Delete</MinimalButton>
 						</div>
-						<p className='text-zinc-500'>Oct 31, 2024</p>
-						<p className='my-8'>
-							Lorem ipsum dolor sit amet consectetur adipisicing elit. Distinctio beatae voluptas placeat ea error fugit
-							dignissimos labore consectetur rerum natus est nostrum aliquam molestias sunt corporis cum, quidem quasi
-							culpa.
-						</p>
+						<p className='text-zinc-500'>{formattedDate}</p>
+						<p className='my-8'>{description}</p>
 						<div className='w-full h-1 bg-zinc-600'></div>
 					</div>
 					<div className='mt-8'>
@@ -42,7 +51,7 @@ export default function SelectedProject() {
 						<img src={noProjectImg} className='w-16 mb-4' alt='noProjectImg' />
 						<h3 className='mb-4 text-2xl font-medium'>No Project Selected</h3>
 						<p className='mb-4'>Select a project or get started with a new one</p>
-						<PrimaryButton>Create new project</PrimaryButton>
+						<PrimaryButton onClick={onAddProject}>Create new project</PrimaryButton>
 					</div>
 				</>
 			)}
