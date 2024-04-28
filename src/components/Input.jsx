@@ -12,7 +12,6 @@ export default function Input({label, type, name, id, value, handleChange}) {
 					className={inputClasses}
 					name={name}
 					id={id}
-					type={type}
 					rows='3'
 					maxLength='255'
 					value={value}

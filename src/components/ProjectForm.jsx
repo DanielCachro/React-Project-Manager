@@ -1,13 +1,13 @@
+import {useState} from 'react'
 import MinimalButton from './MinimalButton'
 import PrimaryButton from './PrimaryButton'
 import Input from './Input'
-import {useState} from 'react'
 
-export default function AddProjectForm({handleSave, initialProject}) {
-	const [newProject, setNewProject] = useState(initialProject)
+export default function AddProjectForm({handleSave, handledProject}) {
+	const [project, setProject] = useState(handledProject)
 
 	function handleChange(e) {
-		setNewProject(prev => ({...prev, [e.target.id]: e.target.value}))
+		setProject(prev => ({...prev, [e.target.id]: e.target.value}))
 	}
 
 	return (
@@ -16,19 +16,19 @@ export default function AddProjectForm({handleSave, initialProject}) {
 				<MinimalButton>Cancel</MinimalButton>
 				<PrimaryButton
 					onClick={() => {
-						handleSave(newProject)
+						handleSave(project)
 					}}>
 					Save
 				</PrimaryButton>
 			</div>
 			<div>
-				<Input label='Title' type='text' name='title' id='title' value={newProject.title} handleChange={handleChange} />
+				<Input label='Title' type='text' name='title' id='title' value={project.title} handleChange={handleChange} />
 				<Input
 					label='Description'
 					type='textarea'
 					name='description'
 					id='description'
-					value={newProject.description}
+					value={project.description}
 					handleChange={handleChange}
 				/>
 				<Input
@@ -36,7 +36,7 @@ export default function AddProjectForm({handleSave, initialProject}) {
 					type='date'
 					name='dueDate'
 					id='dueDate'
-					value={newProject.date}
+					value={project.date}
 					handleChange={handleChange}
 				/>
 			</div>

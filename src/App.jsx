@@ -1,7 +1,12 @@
 import {useState} from 'react'
 import Sidebar from './components/Sidebar'
 import SelectedProject from './components/SelectedProject'
-import AddProjectForm from './components/AddProjectForm'
+import ProjectForm from './components/ProjectForm'
+
+const INITIAL_APP_DATA = {
+	projects: [],
+	isAddingProject: false,
+}
 
 const INITIAL_PROJECT = {
 	title: '',
@@ -10,26 +15,27 @@ const INITIAL_PROJECT = {
 }
 
 function App() {
-	const [projects, setProjects] = useState([])
-	const [isAddingProject, setIsAddingProject] = useState(false)
+	const [appData, setAppData] = useState(INITIAL_APP_DATA)
 
-	function addProject(newProject) {
-		setProjects(prev => [...prev, newProject])
-		setIsAddingProject(false)
+	function addNewProject(newProject) {
+		const newProjects = [...appData.projects, newProject]
+		setAppData(prev => ({...prev, projects: newProjects, isAddingProject: false}))
 	}
+
+	console.log(appData)
 
 	return (
 		<main className='h-screen mt-8 flex gap-8'>
 			<Sidebar
 				handleAddProjectBtn={() => {
-					setIsAddingProject(true)
+					setAppData(prev => ({...prev, isAddingProject: true}))
 				}}
-				projects={projects}></Sidebar>
+				projects={appData.projects}></Sidebar>
 			<div className='w-3/5 pt-16 text-lg text-emerald-50'>
-				{!isAddingProject ? (
+				{!appData.isAddingProject ? (
 					<SelectedProject></SelectedProject>
 				) : (
-					<AddProjectForm handleSave={addProject} initialProject={INITIAL_PROJECT}></AddProjectForm>
+					<ProjectForm handleSave={addNewProject} handledProject={INITIAL_PROJECT}></ProjectForm>
 				)}
 			</div>
 		</main>
