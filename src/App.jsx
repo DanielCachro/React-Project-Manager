@@ -7,12 +7,17 @@ const INITIAL_PROJECT = {
 	title: '',
 	description: '',
 	dueDate: '',
+	tasks: [],
 }
 const INITIAL_APP_DATA = {
-	projects: [],
+	projects: [
+		{title: 'Test Project', description: 'Test Description', dueDate: '2024-05-15', tasks: []},
+		{title: 'Test Project 2', description: 'Test Description', dueDate: '2024-05-15', tasks: []},
+	],
 	isAddingProject: false,
 	selectedProject: 0,
 }
+
 
 function App() {
 	const [appData, setAppData] = useState(INITIAL_APP_DATA)
@@ -26,6 +31,26 @@ function App() {
 			isAddingProject: false,
 			selectedProject: prev.selectedProject + 1,
 		}))
+	}
+
+	function addNewTask(taskName) {
+		const newTasks = [...selectedProject.tasks, taskName]
+		const newProjects = appData.projects.map((project, index) =>
+			index === +appData.selectedProject ? {...project, tasks: newTasks} : project
+		)
+		setAppData(prev => ({...prev, projects: newProjects}))
+	}
+
+	function clearTask(e) {
+		const indexToRemove = +e.target.closest('[data-key]').getAttribute('data-key')
+		const newTasks = [
+			...selectedProject.tasks.slice(0, indexToRemove),
+			...selectedProject.tasks.slice(indexToRemove + 1),
+		]
+		const newProjects = appData.projects.map((project, index) =>
+			index === +appData.selectedProject ? {...project, tasks: newTasks} : project
+		)
+		setAppData(prev => ({...prev, projects: newProjects}))
 	}
 
 	function deleteProject(indexOfProject) {
@@ -51,14 +76,21 @@ function App() {
 				{!appData.isAddingProject ? (
 					<SelectedProject
 						handledProject={selectedProject}
+						onAddProject={() => {
+							setAppData(prev => ({...prev, isAddingProject: true}))
+						}}
 						onDeleteProject={() => {
 							deleteProject(appData.selectedProject)
 						}}
-						onAddProject={() => {
-							setAppData(prev => ({...prev, isAddingProject: true}))
-						}}></SelectedProject>
+						onAddTask={addNewTask}
+						onClearTask={clearTask}></SelectedProject>
 				) : (
-					<ProjectForm handleSave={addNewProject} handledProject={INITIAL_PROJECT}></ProjectForm>
+					<ProjectForm
+						handleSave={addNewProject}
+						handleCancel={() => {
+							setAppData(prev => ({...prev, isAddingProject: false}))
+						}}
+						handledProject={INITIAL_PROJECT}></ProjectForm>
 				)}
 			</div>
 		</main>

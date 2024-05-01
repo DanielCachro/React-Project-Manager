@@ -1,10 +1,14 @@
+import {useRef} from 'react'
+
 import MinimalButton from './MinimalButton'
 import noProjectImg from '../assets/no-projects.png'
 import PrimaryButton from './PrimaryButton'
+import ProjectTask from './ProjectTask'
 
-export default function SelectedProject({handledProject, onDeleteProject, onAddProject}) {
-	const {title, description, dueDate} = handledProject || {}
+export default function SelectedProject({handledProject, onDeleteProject, onAddProject, onAddTask, onClearTask}) {
+	const {title, description, dueDate, tasks} = handledProject || {}
 	const formattedDate = formatDate(dueDate)
+	const taskName = useRef(null)
 
 	function formatDate(date) {
 		const dateObject = new Date(date)
@@ -32,16 +36,19 @@ export default function SelectedProject({handledProject, onDeleteProject, onAddP
 					<div className='mt-8'>
 						<h4 className='text-2xl font-medium'>Tasks</h4>
 						<div className='my-8'>
-							<input type='text' className='mr-4 px-5 py-2 rounded-md bg-zinc-950' />
-							<MinimalButton>Add Task</MinimalButton>
+							<input ref={taskName} type='text' className='mr-4 px-5 py-2 rounded-md bg-zinc-950' />
+							<MinimalButton
+								onClick={() => {
+									onAddTask(taskName.current.value)
+								}}>
+								Add Task
+							</MinimalButton>
 						</div>
-						<div className='px-5 py-16 rounded-md bg-zinc-950'>
-							<ul>
-								<li className='flex justify-between'>
-									<p>Task 1</p>
-									<MinimalButton>Clear</MinimalButton>
-								</li>
-							</ul>
+						<div className='px-6 py-6 rounded-md bg-zinc-950'>
+							{!tasks.length && <p className='text-zinc-500'>Tasks will be listed here.</p>}
+							{tasks.map((name, iteration) => (
+								<ProjectTask dataKey={iteration} key={`Task ${iteration}`} name={name} onClear={onClearTask} />
+							))}
 						</div>
 					</div>
 				</>

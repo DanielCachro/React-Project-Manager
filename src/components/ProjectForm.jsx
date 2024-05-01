@@ -3,7 +3,7 @@ import MinimalButton from './MinimalButton'
 import PrimaryButton from './PrimaryButton'
 import Input from './Input'
 
-export default function AddProjectForm({handleSave, handledProject}) {
+export default function AddProjectForm({handleSave, handleCancel, handledProject}) {
 	const [project, setProject] = useState(handledProject)
 	const [showError, setShowError] = useState(false)
 
@@ -14,7 +14,7 @@ export default function AddProjectForm({handleSave, handledProject}) {
 	return (
 		<form>
 			<div className='flex justify-end gap-4'>
-				<MinimalButton>Cancel</MinimalButton>
+				<MinimalButton onClick={handleCancel}>Cancel</MinimalButton>
 				<PrimaryButton
 					onClick={() => {
 						Object.values(project).every(value => !!value) ? handleSave(project) : setShowError(true)
