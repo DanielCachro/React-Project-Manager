@@ -1,11 +1,18 @@
 import {useRef} from 'react'
 
+import PrimaryButton from './PrimaryButton'
 import MinimalButton from './MinimalButton'
 import noProjectImg from '../assets/no-projects.png'
-import PrimaryButton from './PrimaryButton'
 import ProjectTask from './ProjectTask'
 
-export default function SelectedProject({handledProject, onDeleteProject, onAddProject, onAddTask, onClearTask}) {
+export default function SelectedProject({
+	handledProject,
+	onDeleteProject,
+	onEditProject,
+	onAddProject,
+	onAddTask,
+	onClearTask,
+}) {
 	const {title, description, dueDate, tasks} = handledProject || {}
 	const formattedDate = formatDate(dueDate)
 	const taskName = useRef(null)
@@ -27,7 +34,10 @@ export default function SelectedProject({handledProject, onDeleteProject, onAddP
 					<div>
 						<div className='flex justify-between mb-2'>
 							<h3 className='text-2xl font-medium'>{title}</h3>
-							<MinimalButton onClick={onDeleteProject}>Delete</MinimalButton>
+							<div className='flex gap-4'>
+								<MinimalButton onClick={onEditProject}>Edit</MinimalButton>
+								<MinimalButton onClick={onDeleteProject}>Delete</MinimalButton>
+							</div>
 						</div>
 						<p className='text-zinc-500'>{formattedDate}</p>
 						<p className='my-8'>{description}</p>
@@ -40,6 +50,7 @@ export default function SelectedProject({handledProject, onDeleteProject, onAddP
 							<MinimalButton
 								onClick={() => {
 									onAddTask(taskName.current.value)
+									taskName.current.value = ''
 								}}>
 								Add Task
 							</MinimalButton>

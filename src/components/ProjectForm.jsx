@@ -3,7 +3,7 @@ import MinimalButton from './MinimalButton'
 import PrimaryButton from './PrimaryButton'
 import Input from './Input'
 
-export default function AddProjectForm({handleSave, handleCancel, handledProject}) {
+export default function ProjectForm({handledProject, handleSave, handleCancel}) {
 	const [project, setProject] = useState(handledProject)
 	const [showError, setShowError] = useState(false)
 

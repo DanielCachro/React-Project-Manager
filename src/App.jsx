@@ -10,87 +10,115 @@ const INITIAL_PROJECT = {
 	tasks: [],
 }
 const INITIAL_APP_DATA = {
-	projects: [
-		{title: 'Test Project', description: 'Test Description', dueDate: '2024-05-15', tasks: []},
-		{title: 'Test Project 2', description: 'Test Description', dueDate: '2024-05-15', tasks: []},
-	],
-	isAddingProject: false,
+	projects: [],
+	projectFormOpen: false,
 	selectedProject: 0,
 }
 
-
 function App() {
 	const [appData, setAppData] = useState(INITIAL_APP_DATA)
-	const selectedProject = appData.projects[appData.selectedProject]
+	const selectedProjectData = appData.projects[appData.selectedProject]
 
-	function addNewProject(newProject) {
-		const newProjects = [...appData.projects, newProject]
+	function toggleProjectForm(shouldOpen) {
+		shouldOpen === undefined
+			? setAppData(prev =>
+					prev.projectFormOpen ? {...prev, projectFormOpen: false} : {...prev, projectFormOpen: true}
+			  )
+			: setAppData(prev => ({...prev, projectFormOpen: shouldOpen}))
+	}
+
+	function addNewProject(project) {
+		const newProjects = [...appData.projects, project]
 		setAppData(prev => ({
 			...prev,
 			projects: newProjects,
-			isAddingProject: false,
-			selectedProject: prev.selectedProject + 1,
+			selectedProject: prev.projects.length,
 		}))
+		toggleProjectForm(false)
 	}
 
-	function addNewTask(taskName) {
-		const newTasks = [...selectedProject.tasks, taskName]
-		const newProjects = appData.projects.map((project, index) =>
-			index === +appData.selectedProject ? {...project, tasks: newTasks} : project
-		)
-		setAppData(prev => ({...prev, projects: newProjects}))
-	}
-
-	function clearTask(e) {
-		const indexToRemove = +e.target.closest('[data-key]').getAttribute('data-key')
-		const newTasks = [
-			...selectedProject.tasks.slice(0, indexToRemove),
-			...selectedProject.tasks.slice(indexToRemove + 1),
+	function editProject(project, indexOfProject) {
+		const newProjects = [
+			...appData.projects.slice(0, indexOfProject),
+			project,
+			...appData.projects.slice(indexOfProject + 1),
 		]
-		const newProjects = appData.projects.map((project, index) =>
-			index === +appData.selectedProject ? {...project, tasks: newTasks} : project
-		)
-		setAppData(prev => ({...prev, projects: newProjects}))
+		setAppData(prev => ({...prev, projects: newProjects, selectedProject: indexOfProject}))
+		toggleProjectForm()
 	}
 
 	function deleteProject(indexOfProject) {
-		const indexToRemove = +indexOfProject
+		const indexToRemove = indexOfProject
 		const newProjects = [...appData.projects.slice(0, indexToRemove), ...appData.projects.slice(indexToRemove + 1)]
-		setAppData(prev => ({...prev, projects: newProjects, selectedProject: indexToRemove - 1}))
+		setAppData(prev => ({...prev, projects: newProjects, selectedProject: -1}))
 	}
 
-	function selectProject(e) {
-		const selectedIndex = e.target.getAttribute('data-key')
-		setAppData(prev => ({...prev, selectedProject: selectedIndex}))
+	function selectProject(indexOfProject) {
+		setAppData(prev => ({...prev, selectedProject: indexOfProject}))
+	}
+
+	function addNewTask(taskName) {
+		const newTasks = [...selectedProjectData.tasks, taskName]
+		const newProjects = appData.projects.map((project, index) =>
+			index === appData.selectedProject ? {...project, tasks: newTasks} : project
+		)
+		setAppData(prev => ({...prev, projects: newProjects}))
+	}
+
+	function clearTask(indexOfTask) {
+		const newTasks = [
+			...selectedProjectData.tasks.slice(0, indexOfTask),
+			...selectedProjectData.tasks.slice(indexOfTask + 1),
+		]
+		const newProjects = appData.projects.map((project, index) =>
+			index === appData.selectedProject ? {...project, tasks: newTasks} : project
+		)
+		setAppData(prev => ({...prev, projects: newProjects}))
 	}
 
 	return (
 		<main className='h-screen mt-8 flex gap-8'>
 			<Sidebar
 				handleAddProjectBtnClick={() => {
-					setAppData(prev => ({...prev, isAddingProject: true}))
+					selectProject(-1)
+					toggleProjectForm(true)
 				}}
-				handleSidebarBtnClick={selectProject}
+				handleSidebarBtnClick={e => {
+					selectProject(+e.target.getAttribute('data-key'))
+					toggleProjectForm(false)
+				}}
 				projects={appData.projects}></Sidebar>
 			<div className='w-3/5 pt-16 text-lg text-emerald-50'>
-				{!appData.isAddingProject ? (
+				{!appData.projectFormOpen ? (
 					<SelectedProject
-						handledProject={selectedProject}
+						handledProject={selectedProjectData}
 						onAddProject={() => {
-							setAppData(prev => ({...prev, isAddingProject: true}))
+							toggleProjectForm(true)
 						}}
 						onDeleteProject={() => {
 							deleteProject(appData.selectedProject)
 						}}
+						onEditProject={() => {
+							toggleProjectForm()
+						}}
 						onAddTask={addNewTask}
-						onClearTask={clearTask}></SelectedProject>
+						onClearTask={e => {
+							clearTask(+e.target.closest('[data-key]').getAttribute('data-key'))
+						}}></SelectedProject>
 				) : (
 					<ProjectForm
-						handleSave={addNewProject}
+						key={`Project ${appData.selectedProject}`}
+						handledProject={selectedProjectData ?? INITIAL_PROJECT}
+						handleSave={
+							selectedProjectData
+								? project => {
+										editProject(project, appData.selectedProject)
+								  }
+								: addNewProject
+						}
 						handleCancel={() => {
-							setAppData(prev => ({...prev, isAddingProject: false}))
-						}}
-						handledProject={INITIAL_PROJECT}></ProjectForm>
+							toggleProjectForm()
+						}}></ProjectForm>
 				)}
 			</div>
 		</main>
