@@ -56,7 +56,7 @@ export default function SelectedProject({
 								Add Task
 							</MinimalButton>
 						</div>
-						<div className='max-h-96 p-4 overflow-y-scroll styled-scrollbar rounded-md bg-zinc-950'>
+						<div className='max-h-40 p-4 overflow-y-scroll styled-scrollbar rounded-md bg-zinc-950 md:max-h-96'>
 							{!tasks.length ? (
 								<p className='text-zinc-500'>Tasks will be listed here.</p>
 							) : (
@@ -71,7 +71,7 @@ export default function SelectedProject({
 				</>
 			) : (
 				<>
-					<div className='flex flex-col items-center pt-16'>
+					<div className='flex flex-col items-center pt-16 text-center'>
 						<img src={noProjectImg} className='w-16 mb-4' alt='noProjectImg' />
 						<h3 className='mb-4 text-2xl font-medium'>No Project Selected</h3>
 						<p className='mb-4'>Select a project or get started with a new one</p>
