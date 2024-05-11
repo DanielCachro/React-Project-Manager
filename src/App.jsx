@@ -77,7 +77,7 @@ function App() {
 	}
 
 	return (
-		<main className='h-screen mt-8 flex gap-8'>
+		<main className='flex mt-8'>
 			<Sidebar
 				handleAddProjectBtnClick={() => {
 					selectProject(-1)
@@ -88,7 +88,7 @@ function App() {
 					toggleProjectForm(false)
 				}}
 				projects={appData.projects}></Sidebar>
-			<div className='w-3/5 pt-16 text-lg text-emerald-50'>
+			<div className='w-1/2 pt-16 text-lg text-emerald-50 mx-8 sm:w-3/5'>
 				{!appData.projectFormOpen ? (
 					<SelectedProject
 						handledProject={selectedProjectData}
